@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "./providers/AuthProvider";
-
+import axios from "axios";
 function App() {
 
   const {
@@ -12,15 +12,27 @@ function App() {
 
   const handleRegister = () => {
 
-    createUser("test@test.com", "123456")
+    const randomEmail = `test${Date.now()}@test.com`;
+  
+    createUser(randomEmail, "123456")
       .then(result => {
+  
         console.log(result.user);
+  
+        axios.post('http://localhost:5000/users', {
+          name: result.user.displayName || "Test User",
+          email: result.user.email,
+          photo: result.user.photoURL || ""
+        })
+        .then(res => {
+          console.log(res.data);
+        });
+  
       })
       .catch(error => {
         console.log(error.message);
       });
   };
-
   const handleGoogleLogin = () => {
 
     signInWithGoogle()
