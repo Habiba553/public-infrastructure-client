@@ -15,11 +15,15 @@ import router from './routes/router.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
 
-    <AuthProvider>
+    <div data-theme="light">
 
-      <RouterProvider router={router} />
+      <AuthProvider>
 
-    </AuthProvider>
+        <RouterProvider router={router} />
+
+      </AuthProvider>
+
+    </div>
 
   </React.StrictMode>,
 )
