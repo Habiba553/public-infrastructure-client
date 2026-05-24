@@ -10,7 +10,7 @@ const ManageUsers = () => {
 
   useEffect(() => {
 
-    axios.get('http://localhost:5000/users')
+    secureAxios.get('http://localhost:5000/users')
       .then(res => {
         setUsers(res.data);
       });
@@ -19,7 +19,7 @@ const ManageUsers = () => {
 
   const handleMakeAdmin = async id => {
 
-    const res = await axios.patch(
+    const res = await secureAxios.patch(
       `http://localhost:5000/users/admin/${id}`
     );
 
@@ -36,7 +36,7 @@ const ManageUsers = () => {
 
   const handleBlockUser = async id => {
 
-    const res = await axios.patch(
+    const res = await secureAxios.patch(
       `http://localhost:5000/users/block/${id}`
     );
 
@@ -61,7 +61,7 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
 
-      const res = await axios.delete(
+      const res = await secureAxios.delete(
         `http://localhost:5000/users/${id}`
       );
 
@@ -76,6 +76,13 @@ const ManageUsers = () => {
       }
     }
   };
+  const token = localStorage.getItem('access-token');
+const secureAxios = axios.create({
+
+  headers: {
+    authorization: `Bearer ${token}`
+  }
+});
 
   return (
 

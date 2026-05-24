@@ -6,11 +6,19 @@ import Swal from "sweetalert2";
 
 const ManageIssues = () => {
 
+  const token = localStorage.getItem('access-token');
+
+const secureAxios = axios.create({
+
+  headers: {
+    authorization: `Bearer ${token}`
+  }
+});
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {
 
-    axios.get('http://localhost:5000/admin/issues')
+    secureAxios.get('http://localhost:5000/admin/issues')
       .then(res => {
         setIssues(res.data);
       });
@@ -19,7 +27,7 @@ const ManageIssues = () => {
 
   const handleStatusChange = async (id, status) => {
 
-    const res = await axios.patch(
+    const res = await secureAxios.patch(
       `http://localhost:5000/issues/status/${id}`,
       { status }
     );

@@ -15,16 +15,27 @@ const useRole = () => {
 
     if (user?.email) {
 
+      const token = localStorage.getItem('access-token');
+
       axios.get(
-        `http://localhost:5000/users/${user.email}`
+      
+        `http://localhost:5000/users/${user.email}`,
+      
+        {
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        }
+      
       )
       .then(res => {
-
+      
         setRole(res.data.role);
-
+      
         setRoleLoading(false);
-
+      
       });
+
     }
 
   }, [user]);
