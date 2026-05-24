@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const AllIssues = () => {
 
@@ -66,7 +67,12 @@ const AllIssues = () => {
                 <p>
                   Upvotes: {issue.upvotes}
                 </p>
-
+                <Link
+  to={`/issue-details/${issue._id}`}
+  className="btn btn-primary mt-4"
+>
+  View Details
+</Link>
               </div>
 
             </div>
