@@ -1,10 +1,22 @@
+import Banner from "./Banner";
+import Statistics from "./Statistics";
+import Testimonials from "./Testimonials";
+import LatestResolvedIssues from "./LatestResolvedIssues";
+import Features from "./Features";
+import HowItWorks from "./HowItWorks";
 const Home = () => {
   return (
-    <div>
-      <h1 className="text-5xl font-bold text-center mt-20">
-        Home Page
-      </h1>
-    </div>
+     
+      <div>
+      <Banner />
+      <LatestResolvedIssues />
+      <Features />
+      <HowItWorks />
+<Statistics />
+
+<Testimonials />
+</div>
+  
   );
 };
 

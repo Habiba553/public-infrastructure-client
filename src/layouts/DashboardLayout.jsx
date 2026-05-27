@@ -1,5 +1,17 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Link,NavLink, Outlet } from "react-router-dom";
 import useRole from "../hooks/useRole";
+
+import {
+
+  FaHome,
+  FaUser,
+  FaClipboardList,
+  FaExclamationTriangle,
+  FaUsers,
+  FaTasks,
+  FaMoneyBill
+
+} from "react-icons/fa";
 const DashboardLayout = () => {
 
   const [role] = useRole();
@@ -17,9 +29,12 @@ const DashboardLayout = () => {
       Back To Home
             </NavLink>
         <li>
-          <NavLink to='/dashboard'>
-            Dashboard Home
-          </NavLink>
+        <li>
+  <Link to='/dashboard' className="flex items-center gap-3 hover:text-primary">
+    <FaHome />
+    Dashboard Home
+  </Link>
+</li>
         </li>
 
         <li>
@@ -39,6 +54,11 @@ const DashboardLayout = () => {
             Report Issue
           </NavLink>
         </li>
+        <li>
+        <NavLink to='/dashboard/payment'>
+  Payment
+</NavLink>
+</li>
 
       </>
     )

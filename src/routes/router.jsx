@@ -24,7 +24,7 @@ import AdminRoute from "./AdminRoute";
 import AdminHome from "../dashboard/Admin/AdminHome";
 import ManageUsers from "../dashboard/Admin/ManageUsers";
 import ManageIssues from "../dashboard/Admin/ManageIssues";
-
+import Payment from "../dashboard/Citizen/Payment";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -114,6 +114,10 @@ const router = createBrowserRouter([
             <ManageIssues />
           </AdminRoute>
         )
+      },
+      {
+        path: '/dashboard/payment',
+        element: <Payment />
       }
     
     ]

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 import axios from "axios";
@@ -16,13 +16,34 @@ const ReportIssue = () => {
     reset
   } = useForm();
 
+  const [uploading, setUploading] = useState(false);
   const onSubmit = async data => {
+    setUploading(true);
+    const imageFile = data.image[0];
+    const formData = new FormData();
 
+formData.append('file', imageFile);
+
+formData.append(
+  'upload_preset',
+  'publicInfrastructure'
+);
+
+const imageUploadURL =
+
+  `https://api.cloudinary.com/v1_1/ddfhwti4r/image/upload`;
+  const imageRes = await axios.post(
+    imageUploadURL,
+    formData
+  );
+  const imageURL = imageRes.data.secure_url;
     const issueData = {
       ...data,
       userName: user.displayName,
       userEmail: user.email,
+      image: imageURL,
       userPhoto: user.photoURL
+      
     };
 
     const res = await axios.post(
@@ -32,6 +53,7 @@ const ReportIssue = () => {
 
     if (res.data.insertedId) {
 
+      setUploading(false);
       Swal.fire({
         icon: 'success',
         title: 'Issue Reported Successfully'
@@ -53,6 +75,7 @@ const ReportIssue = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-5 max-w-2xl"
       >
+   
 
         <input
           type="text"
@@ -67,12 +90,13 @@ const ReportIssue = () => {
           {...register("description")}
         ></textarea>
 
-        <input
-          type="text"
-          placeholder="Image URL"
-          className="input input-bordered w-full"
-          {...register("image")}
-        />
+<input
+  type="file"
+  accept="image/*"
+  className="file-input file-input-bordered w-full"
+  {...register('image')}
+  required
+/>
 
         <input
           type="text"
@@ -104,9 +128,18 @@ const ReportIssue = () => {
 
         </select>
 
-        <button className="btn btn-primary">
-          Submit Issue
-        </button>
+        <button
+  disabled={uploading}
+  className="btn btn-primary"
+>
+  {
+    uploading
+      ? 'Uploading...'
+      : 'Submit Issue'
+  }
+
+</button>
+        
 
       </form>
 
