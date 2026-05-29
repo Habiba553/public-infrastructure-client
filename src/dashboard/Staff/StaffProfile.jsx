@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
-import { Link } from "react-router-dom";
 
-const Profile = () => {
+const StaffProfile = () => {
 
   const { user, updateUserProfile } = useAuth();
 
@@ -13,22 +12,22 @@ const Profile = () => {
 
   useEffect(() => {
 
-    axios
-      .get(
-        `http://localhost:5000/users/${user?.email}`,
-        {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem(
-              "access-token"
-            )}`
-          }
+    axios.get(
+      `http://localhost:5000/users/profile/${user?.email}`,
+      {
+        headers: {
+          authorization: `Bearer ${
+            localStorage.getItem("access-token")
+          }`
         }
-      )
-      .then((res) => {
+      }
+    )
+    .then(res => {
 
-        setUserInfo(res.data);
-        setLoading(false);
-      });
+      setUserInfo(res.data);
+      setLoading(false);
+
+    });
 
   }, [user]);
 
@@ -48,29 +47,29 @@ const Profile = () => {
       photo
     };
 
-    const res = await axios.put(
+    const result = await axios.put(
       `http://localhost:5000/users/profile/${user.email}`,
       updatedData,
       {
         headers: {
-          authorization: `Bearer ${localStorage.getItem(
-            "access-token"
-          )}`
+          authorization: `Bearer ${
+            localStorage.getItem("access-token")
+          }`
         }
       }
     );
 
-    if (res.data.modifiedCount) {
-
-      Swal.fire({
-        icon: "success",
-        title: "Profile Updated"
-      });
+    if (result.data.modifiedCount > 0) {
 
       setUserInfo({
         ...userInfo,
         name,
         photo
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Profile Updated Successfully"
       });
     }
   };
@@ -89,24 +88,8 @@ const Profile = () => {
     <div className="max-w-5xl mx-auto">
 
       <h1 className="text-5xl font-bold mb-10">
-        My Profile
+        Staff Profile
       </h1>
-
-      {/* BLOCK WARNING */}
-
-      {
-        userInfo.blocked && (
-
-          <div className="alert alert-error mb-8">
-
-            <span>
-              ⚠️ Your account has been blocked by admin.
-              Please contact authorities.
-            </span>
-
-          </div>
-        )
-      }
 
       {/* PROFILE CARD */}
 
@@ -117,7 +100,7 @@ const Profile = () => {
           <img
             src={userInfo.photo}
             alt=""
-            className="w-40 h-40 rounded-full border-4 border-primary"
+            className="w-40 h-40 rounded-full border-4 border-secondary"
           />
 
           <div>
@@ -126,20 +109,18 @@ const Profile = () => {
 
               {userInfo.name}
 
-              {
-                userInfo.premium && (
-
-                  <span className="badge badge-warning ml-4">
-                    PREMIUM
-                  </span>
-
-                )
-              }
+              <span className="badge badge-secondary ml-4">
+                STAFF
+              </span>
 
             </h2>
 
             <p className="text-lg mt-3">
               {userInfo.email}
+            </p>
+
+            <p className="mt-2">
+              Phone: {userInfo.phone}
             </p>
 
             <p className="mt-2 capitalize">
@@ -152,45 +133,12 @@ const Profile = () => {
 
       </div>
 
-      {/* SUBSCRIPTION */}
-
-      {
-        !userInfo.premium && (
-
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-3xl p-10 mt-10">
-
-            <h2 className="text-3xl font-bold mb-3">
-
-              Become Premium
-
-            </h2>
-
-            <p className="mb-5">
-
-              Premium users can submit unlimited issues.
-
-            </p>
-
-            <Link
-              to="/dashboard/payment"
-              className="btn btn-warning"
-            >
-              Subscribe (1000 Tk)
-            </Link>
-
-          </div>
-
-        )
-      }
-
       {/* UPDATE PROFILE */}
 
       <div className="bg-base-100 shadow-xl rounded-3xl p-10 mt-10">
 
         <h2 className="text-3xl font-bold mb-8">
-
           Update Profile
-
         </h2>
 
         <form
@@ -229,7 +177,8 @@ const Profile = () => {
           </div>
 
           <button
-            className="btn btn-primary"
+            type="submit"
+            className="btn btn-secondary cursor-pointer"
           >
             Update Profile
           </button>
@@ -242,4 +191,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default StaffProfile;

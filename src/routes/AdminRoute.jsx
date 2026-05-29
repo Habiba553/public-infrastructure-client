@@ -9,12 +9,15 @@ const AdminRoute = ({ children }) => {
 
   const { user, loading } = useAuth();
 
-  const [role, roleLoading] = useRole();
+  const [role, isBlocked, roleLoading] = useRole();
 
   if (loading || roleLoading) {
     return <LoadingSpinner />;
   }
 
+  console.log("ADMIN ROUTE");
+console.log("USER =", user);
+console.log("ROLE =", role);
   if (user && role === 'admin') {
     return children;
   }

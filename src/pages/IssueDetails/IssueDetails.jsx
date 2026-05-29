@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useParams } from "react-router-dom";
+import {
+  useParams,
+  Link,
+  useNavigate
+} from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-
 const IssueDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const [issue, setIssue] = useState({});
-
+  const navigate = useNavigate();
   useEffect(() => {
     axios.get(`http://localhost:5000/issues/${id}`)
       .then(res => {
@@ -70,7 +73,80 @@ const IssueDetails = () => {
       });
     }
   };
+  const handleDelete = async () => {
 
+    const confirm =
+      await Swal.fire({
+  
+        title: 'Are you sure?',
+  
+        text: 'This issue will be deleted',
+  
+        icon: 'warning',
+  
+        showCancelButton: true
+      });
+  
+    if (!confirm.isConfirmed) {
+  
+      return;
+    }
+  
+    const token =
+      localStorage.getItem('access-token');
+  
+    const res = await axios.delete(
+  
+      `http://localhost:5000/issues/${id}`,
+  
+      {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }
+    );
+  
+    if (res.data.deletedCount > 0) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Issue Deleted'
+      });
+    }
+    navigate('/all-issues');
+  };
+  const handleBoost = async () => {
+
+    const token =
+      localStorage.getItem('access-token');
+  
+    const res = await axios.patch(
+  
+      `http://localhost:5000/issues/boost/${id}`,
+  
+      {},
+  
+      {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }
+    );
+  
+    if (res.data.modifiedCount > 0) {
+  
+      Swal.fire({
+  
+        icon: 'success',
+  
+        title: 'Issue Boosted'
+      });
+  
+      setIssue({
+        ...issue,
+        priority: 'high'
+      });
+    }
+  };
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-6 py-12 bg-base-100 text-base-content transition-colors duration-300">
       
@@ -131,7 +207,30 @@ const IssueDetails = () => {
               </p>
             </div>
           </div>
+          {
+  issue.assignedStaff && (
 
+    <div className="bg-base-200 p-5 rounded-2xl">
+
+      <h2 className="font-bold text-xl mb-3">
+
+        Assigned Staff
+
+      </h2>
+
+      <p>
+        Name:
+        {issue.assignedStaff.name}
+      </p>
+
+      <p>
+        Email:
+        {issue.assignedStaff.email}
+      </p>
+
+    </div>
+  )
+}
           {/* METADATA STATS ROW & ACTIONS CONTAINER */}
           <div className="pt-4 border-t border-base-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             
@@ -145,7 +244,44 @@ const IssueDetails = () => {
                 <h3 className="text-2xl font-black text-[#7C3AED]">{issue.upvotes || 0} Upvotes</h3>
               </div>
             </div>
+            {
+  user?.email === issue.userEmail &&
+  issue.status === 'pending' && (
 
+    <Link
+      to={`/dashboard/update-issue/${issue._id}`}
+      className="btn btn-info"
+    >
+
+      Edit Issue
+
+    </Link>
+  )
+}
+{
+  user?.email === issue.userEmail && (
+
+    <button
+      onClick={handleDelete}
+      className="btn btn-error"
+    >
+
+      Delete Issue
+
+    </button>
+  )
+}
+{
+  issue.priority !== 'high' && (
+
+    <button
+  onClick={handleBoost}
+  className="btn btn-warning"
+>
+  Boost Priority (100 TK)
+</button>
+  )
+}
             {/* Upvote Interactive Component Action Trigger */}
             <button
               onClick={handleUpvote}
@@ -153,9 +289,77 @@ const IssueDetails = () => {
             >
               <span>👍</span> Upvote Issue
             </button>
+
           </div>
 
         </div>
+        <div className="mt-20">
+
+<h2 className="text-4xl font-bold mb-10">
+
+  Issue Timeline
+
+</h2>
+
+<div className="space-y-6">
+
+  {
+    issue.timeline?.slice().reverse().map((item, index) => (
+
+      <div
+        key={index}
+        className="border-l-4 border-[#7C3AED] pl-6 py-3 bg-base-200 rounded-xl"
+      >
+
+        <div className="flex items-center gap-3 mb-2">
+
+        <div
+  className={`badge ${
+    item.status === 'pending'
+      ? 'badge-warning'
+      : item.status === 'in-progress'
+      ? 'badge-info'
+      : item.status === 'working'
+      ? 'badge-secondary'
+      : item.status === 'resolved'
+      ? 'badge-success'
+      : item.status === 'closed'
+      ? 'badge-neutral'
+      : item.status === 'boosted'
+      ? 'badge-error'
+      : item.status === 'rejected'
+      ? 'badge-error'
+      : 'badge-primary'
+  }`}
+>
+
+  {item.status}
+
+</div>
+
+          <p className="text-sm opacity-70">
+
+            {new Date(item.time).toLocaleString()}
+
+          </p>
+
+        </div>
+
+        <h3 className="font-bold text-lg">
+
+          {item.message}
+
+        </h3>
+
+        <p className="opacity-70">
+          Updated By:
+          {item.updatedBy}
+        </p>
+      </div>
+    ))
+  }
+</div>
+</div>
       </div>
 
     </div>

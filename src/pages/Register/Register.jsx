@@ -65,73 +65,146 @@ const Register = () => {
 
   return (
 
-    <div className="hero min-h-screen bg-base-200">
-
-      <div className="card bg-base-100 w-full max-w-sm shadow-2xl">
-
-        <div className="card-body">
-
-          <h1 className="text-4xl font-bold text-center">
-            Register
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 flex items-center justify-center px-4">
+  
+      <div className="w-full max-w-md">
+  
+        {/* Logo */}
+  
+        <div className="text-center mb-8">
+  
+          <h1 className="text-5xl font-extrabold text-primary">
+  
+            CivicTrack
+  
           </h1>
-
+  
+          <p className="text-gray-600 mt-3">
+  
+            Join the community and report issues around you
+  
+          </p>
+  
+        </div>
+  
+        {/* Register Card */}
+  
+        <div className="bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl p-8 border border-white">
+  
+          <h2 className="text-3xl font-bold text-center mb-2">
+  
+            Create Account 🚀
+  
+          </h2>
+  
+          <p className="text-center text-gray-500 mb-8">
+  
+            Register to start reporting issues
+  
+          </p>
+  
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4 mt-5"
+            className="space-y-5"
           >
-
-            <input
-              type="text"
-              placeholder="Name"
-              className="input input-bordered w-full"
-              {...register("name")}
-            />
-
-            <input
-              type="text"
-              placeholder="Photo URL"
-              className="input input-bordered w-full"
-              {...register("photo")}
-            />
-
-            <input
-              type="email"
-              placeholder="Email"
-              className="input input-bordered w-full"
-              {...register("email")}
-            />
-
-            <input
-              type="password"
-              placeholder="Password"
-              className="input input-bordered w-full"
-              {...register("password")}
-            />
-
-            <button className="btn btn-primary w-full">
-              Register
-            </button>
-
-          </form>
-
-          <p className="text-center mt-4">
-
-            Already have an account?
-
-            <Link
-              to='/login'
-              className="text-primary ml-2"
+  
+            <div>
+  
+              <label className="font-semibold">
+                Full Name
+              </label>
+  
+              <input
+                type="text"
+                placeholder="Enter your name"
+                className="input input-bordered w-full mt-2"
+                {...register("name")}
+              />
+  
+            </div>
+  
+            <div>
+  
+              <label className="font-semibold">
+                Photo URL
+              </label>
+  
+              <input
+                type="text"
+                placeholder="Enter photo URL"
+                className="input input-bordered w-full mt-2"
+                {...register("photo")}
+              />
+  
+            </div>
+  
+            <div>
+  
+              <label className="font-semibold">
+                Email Address
+              </label>
+  
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="input input-bordered w-full mt-2"
+                {...register("email")}
+              />
+  
+            </div>
+  
+            <div>
+  
+              <label className="font-semibold">
+                Password
+              </label>
+  
+              <input
+                type="password"
+                placeholder="Create password"
+                className="input input-bordered w-full mt-2"
+                {...register("password")}
+              />
+  
+            </div>
+  
+            <button
+              className="btn btn-primary w-full text-lg"
             >
+  
+              Create Account
+  
+            </button>
+  
+          </form>
+  
+          <p className="text-center mt-6">
+  
+            Already have an account?
+  
+            <Link
+              to="/login"
+              className="text-primary font-bold ml-2"
+            >
+  
               Login
+  
             </Link>
-
+  
           </p>
-
+  
         </div>
-
+  
+        <p className="text-center text-sm text-gray-500 mt-6">
+  
+          Public Infrastructure Issue Reporting System
+  
+        </p>
+  
       </div>
-
+  
     </div>
+  
   );
 };
 

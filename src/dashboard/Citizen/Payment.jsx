@@ -30,7 +30,7 @@ const CheckoutForm = () => {
 
   const [processing, setProcessing] = useState(false);
 
-  const premiumAmount = 10;
+  const premiumAmount = 1000;
 
 
 
