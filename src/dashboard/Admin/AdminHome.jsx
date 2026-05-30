@@ -8,17 +8,45 @@ import {
 } from "recharts";
 
 const AdminHome = () => {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    latestIssues: [],
+    latestPayments: [],
+    latestUsers: []
+  });
   const token = localStorage.getItem('access-token');
 
   const secureAxios = axios.create({
     headers: { authorization: `Bearer ${token}` }
   });
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    secureAxios.get('http://localhost:5000/admin/statistics')
-      .then(res => setStats(res.data))
-      .catch(err => console.error("Error fetching stats", err));
+
+    const token =
+      localStorage.getItem('access-token');
+  
+    axios.get(
+      'http://localhost:5000/admin/statistics',
+      {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }
+    )
+    .then(res => {
+  
+      setStats(res.data);
+  
+      setLoading(false);
+  
+    })
+    .catch(error => {
+  
+      console.error(error);
+  
+      setLoading(false);
+  
+    });
+  
   }, []);
 
   if (!stats) return <LoadingSpinner />;
@@ -37,6 +65,15 @@ const AdminHome = () => {
 
   const COLORS = ['#00C49F', '#FFBB28', '#FF8042'];
 
+  if (loading) {
+
+    return (
+      <div className="flex justify-center py-20">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  
+  }
   return (
     <div className="p-6 space-y-10">
       <h1 className="text-4xl font-extrabold tracking-tight">Admin Analytics Dashboard</h1>

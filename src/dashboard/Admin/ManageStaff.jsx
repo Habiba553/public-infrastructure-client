@@ -41,7 +41,7 @@ const ManageStaff = () => {
     // FIXED: Added role field explicitly to avoid filtering drop-outs on refresh
     const staffPayload = {
       name: form.name.value,
-      email: form.email.value,
+      email: form.email.value.toLowerCase(),
       phone: form.phone.value,
       photo: form.photo.value,
       password: form.password.value,
@@ -133,7 +133,7 @@ const ManageStaff = () => {
       {/* ACTION HEADER PANEL */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-1">Manage Field Staff</h1>
+        <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-1">Manage Field Staff</h1>
           <p className="text-sm text-base-content/60">Provision account identities, tweak operational metadata, or remove active crew permissions.</p>
         </div>
         <button 
@@ -145,7 +145,7 @@ const ManageStaff = () => {
       </div>
 
       {/* CORE TABULAR REGISTRY */}
-      <div className="overflow-x-auto border border-base-300 rounded-2xl shadow-sm bg-base-200">
+      <div className="overflow-x-auto w-full border border-base-300 rounded-2xl shadow-sm bg-base-200">
         <table className="table table-zebra w-full">
           <thead>
             <tr className="bg-base-300/50 text-base-content/80 text-sm border-b border-base-300">
@@ -164,7 +164,7 @@ const ManageStaff = () => {
               staff.map(member => (
                 <tr key={member._id} className="hover:bg-base-300/30 transition-colors">
                   <td className="py-4">
-                    <div className="flex items-center gap-3">
+                  <div className="flex flex-col md:flex-row items-center gap-3">
                       <div className="avatar placeholder">
                         <div className="bg-base-300 text-base-content rounded-xl w-10 h-10 object-cover">
                           {member.photo ? <img src={member.photo} alt={member.name} /> : <FaUserTie className="text-base-content/40 text-lg" />}
@@ -183,7 +183,7 @@ const ManageStaff = () => {
                     <span className="flex items-center gap-1.5"><FaPhoneAlt className="opacity-40" /> {member.phone}</span>
                   </td>
                   <td className="text-center px-6">
-                    <div className="flex items-center justify-center gap-2">
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-2">
                       <button 
                         onClick={() => { setEditingStaff(member); setTimeout(() => document.getElementById('edit_staff_modal').showModal(), 50); }} 
                         className="btn btn-sm btn-ghost text-amber-600 bg-amber-500/5 hover:bg-amber-500 hover:text-white rounded-xl font-bold"
@@ -206,8 +206,11 @@ const ManageStaff = () => {
       </div>
 
       {/* MODAL WINDOW: ADD NEW SYSTEM STAFF */}
-      <dialog id="add_staff_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-base-100 p-6 rounded-2xl border border-base-300 shadow-xl max-w-md">
+      <dialog
+  id="add_staff_modal"  
+  className="modal"
+>
+        <div className="modal-box w-11/12 max-w-lg bg-base-100 p-6 rounded-2xl border border-base-300 shadow-xl">
           <div className="flex items-center gap-2 mb-4 text-[#7C3AED]">
             <FaUserPlus className="text-2xl" />
             <h3 className="font-extrabold text-xl">Provision Staff Identity</h3>
@@ -242,8 +245,11 @@ const ManageStaff = () => {
       </dialog>
 
       {/* MODAL WINDOW: UPDATE PRE-EXISTING STAFF PARAMETERS */}
-      <dialog id="edit_staff_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-base-100 p-6 rounded-2xl border border-base-300 shadow-xl max-w-md">
+      <dialog
+  id="edit_staff_modal"
+  className="modal"
+>
+        <div className="modal-box w-11/12 max-w-lg bg-base-100 p-6 rounded-2xl border border-base-300 shadow-xl">
           <div className="flex items-center gap-2 mb-4 text-amber-600">
             <FaUserEdit className="text-2xl" />
             <h3 className="font-extrabold text-xl">Modify Staff Parameters</h3>

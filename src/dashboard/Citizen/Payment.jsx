@@ -99,8 +99,6 @@ const CheckoutForm = () => {
       return;
     }
 
-
-
     const result = await stripe.confirmCardPayment(
 
       clientSecret,

@@ -34,7 +34,7 @@ const Register = () => {
 
         const userInfo = {
           name: data.name,
-          email: data.email,
+          email: data.email.toLowerCase(),
           photo: data.photo
         };
 

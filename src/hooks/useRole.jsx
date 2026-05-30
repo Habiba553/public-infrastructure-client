@@ -22,13 +22,19 @@ const useRole = () => {
         }
       )
       .then(res => {
+
+        console.log("FULL RESPONSE =", res);
       
-        console.log("FULL RESPONSE:", res);
-        console.log("DATA:", res.data);
-        console.log("ROLE:", res.data?.role);
+        console.log("DATA TYPE =", typeof res.data);
+      
+        console.log("DATA =", JSON.stringify(res.data));
+      
+        console.log("ROLE =", res.data?.role);
       
         setRole(res.data?.role || 'citizen');
+      
         setIsBlocked(res.data?.blocked === true);
+      
         setRoleLoading(false);
       
       })
