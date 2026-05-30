@@ -26,7 +26,7 @@ import ManageIssues from "../dashboard/Admin/ManageIssues";
 import AdminProfile from "../dashboard/Admin/AdminProfile";
 import Payment from "../dashboard/Citizen/Payment";
 import UpdateIssue from "../dashboard/Citizen/UpdateIssue";
-
+import BoostPayment from "../dashboard/Citizen/BoostPayment";
 // 1. IMPORT YOUR USE_ROLE HOOK
 import useRole from "../hooks/useRole"; 
 
@@ -106,6 +106,10 @@ const router = createBrowserRouter([
         element: <Profile />
       },
       {
+        path: "boost-payment/:id",
+        element: <BoostPayment />
+      },
+      {
         path: 'admin-home',
         element: (
           <AdminRoute>
@@ -154,11 +158,11 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: 'payment', // 👈 Clean relative path
+        path: 'payment', 
         element: <Payment />
       },
       {
-        path: 'update-issue/:id', // 👈 Clean relative path
+        path: 'update-issue/:id', 
         element: <UpdateIssue />
       },
       {

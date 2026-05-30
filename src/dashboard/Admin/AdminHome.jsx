@@ -161,7 +161,17 @@ const AdminHome = () => {
           <ul className="divide-y divide-base-200 text-sm">
             {stats.latestPayments?.map(p => (
               <li key={p._id} className="py-2 flex justify-between">
-                <span>{p.userEmail}</span>
+              <div>
+  <p className="font-medium">
+    {p.name || "Unknown User"}
+  </p>
+  <p className="text-xs opacity-70">
+    {p.email}
+  </p>
+  <span className="badge badge-info badge-sm mt-1">
+      {p.type || "Premium"}
+    </span>
+</div>
                 <span className="font-semibold text-success">${p.amount}</span>
               </li>
             ))}

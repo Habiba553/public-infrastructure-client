@@ -14,36 +14,29 @@ const stripePromise = loadStripe(
 import { useEffect, useState } from "react";
 
 import axios from "axios";
-
+import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import useAuth from "../../hooks/useAuth";
 const CheckoutForm = () => {
 
   const stripe = useStripe();
-
+  const { id } = useParams();
+const navigate = useNavigate();
   const elements = useElements();
-
   const { user } = useAuth();
 
   const [clientSecret, setClientSecret] = useState('');
 
   const [processing, setProcessing] = useState(false);
-
-  const premiumAmount = 1000;
-
-
-
+  const boostAmount = 100;
   useEffect(() => {
 
     axios.post(
-
       'http://localhost:5000/create-payment-intent',
-
       {
-        amount: premiumAmount
+        amount: boostAmount
       }
-
     )
     .then(res => {
 
@@ -84,18 +77,12 @@ const CheckoutForm = () => {
 
       card
     });
-
-
-
     if (error) {
-
       Swal.fire({
         icon: 'error',
         title: error.message
       });
-
       setProcessing(false);
-
       return;
     }
     const result = await stripe.confirmCardPayment(
@@ -110,11 +97,7 @@ const CheckoutForm = () => {
         }
       }
     );
-
-
-
     if (result.error) {
-
       Swal.fire({
         icon: 'error',
         title: result.error.message
@@ -126,36 +109,42 @@ const CheckoutForm = () => {
     }
 
     if (result.paymentIntent.status === 'succeeded') {
+
       const paymentInfo = {
         email: user.email,
         name: user.displayName,
-        amount: premiumAmount,
-        transactionId:
-          result.paymentIntent.id,
-        paymentMethod:
-          result.paymentIntent.payment_method,
-        type: "Premium Subscription",
+        amount: 100,
+        transactionId: result.paymentIntent.id,
+        paymentMethod: result.paymentIntent.payment_method,
+        type: "Issue Boost",
+        issueId: id,
         date: new Date()
       };
-      
+    
       await axios.post(
         "http://localhost:5000/payments",
         paymentInfo
       );
+    
       await axios.patch(
-        `http://localhost:5000/users/premium/${user.email}`
+        `http://localhost:5000/issues/boost/${id}`,
+        {},
+        {
+          headers: {
+            authorization: `Bearer ${
+              localStorage.getItem("access-token")
+            }`
+          }
+        }
       );
+    
       Swal.fire({
-        icon: 'success',
-        title: 'Payment Successful'
+        icon: "success",
+        title: "Issue Boosted Successfully"
       });
-
-      setProcessing(false);
+      navigate(`/issue-details/${id}`);
     }
   };
-
-
-
   return (
 
     <form
@@ -166,31 +155,26 @@ const CheckoutForm = () => {
       <CardElement />
 
       <button
-        disabled={!stripe || !clientSecret || processing}
-        className="btn btn-primary mt-5"
-      >
-
-        {
-          processing
-            ? 'Processing...'
-            : `Pay ${premiumAmount}Tk`
-        }
-
-      </button>
+  disabled={!stripe || !clientSecret || processing}
+  className="btn btn-primary mt-5"
+>
+  {
+    processing
+      ? 'Processing...'
+      : `Pay ${boostAmount}Tk`
+  }
+</button>
 
     </form>
   );
 };
-const Payment = () => {
-
+const BoostPayment = () => {
   return (
-
     <div className="max-w-xl mx-auto">
 
       <h1 className="text-4xl font-bold mb-10">
 
-        Upgrade To Premium
-
+        Boost Priority
       </h1>
 
       <Elements stripe={stripePromise}>
@@ -203,4 +187,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default BoostPayment;

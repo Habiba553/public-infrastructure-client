@@ -116,36 +116,75 @@ const IssueDetails = () => {
   };
   const handleBoost = async () => {
 
-    const token =
-      localStorage.getItem('access-token');
+    const confirm =
+      await Swal.fire({
   
-    const res = await axios.patch(
+        title: "Confirm Payment?",
   
+        text: "100 Tk will be charged.",
+  
+        icon: "question",
+  
+        showCancelButton: true,
+  
+        confirmButtonText:
+          "Pay 100 Tk"
+  
+      });
+  
+    if (!confirm.isConfirmed) {
+  
+      return;
+  
+    }
+  
+    const paymentInfo = {
+  
+      email: user.email,
+  
+      name: user.displayName,
+  
+      amount: 100,
+  
+      type: "Issue Boost",
+  
+      transactionId:
+        crypto.randomUUID(),
+  
+      date: new Date()
+  
+    };
+  
+    await axios.post(
+      "http://localhost:5000/payments",
+      paymentInfo
+    );
+  
+    await axios.patch(
       `http://localhost:5000/issues/boost/${id}`,
-  
       {},
-  
       {
         headers: {
-          authorization: `Bearer ${token}`
+          authorization:
+            `Bearer ${
+              localStorage.getItem(
+                "access-token"
+              )
+            }`
         }
       }
     );
+    setIssue({
+      ...issue,
+      priority: 'high'
+    });
+    Swal.fire({
+      icon: "success",
+      title:
+        "Issue Boosted Successfully"
   
-    if (res.data.modifiedCount > 0) {
+    });
   
-      Swal.fire({
-  
-        icon: 'success',
-  
-        title: 'Issue Boosted'
-      });
-  
-      setIssue({
-        ...issue,
-        priority: 'high'
-      });
-    }
   };
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-6 py-12 bg-base-100 text-base-content transition-colors duration-300">

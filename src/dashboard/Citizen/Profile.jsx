@@ -291,40 +291,6 @@ const Profile = () => {
 
 </h2>
 
-{
-
-  payments.map(payment => (
-
-    <div
-      key={payment._id}
-      className="flex justify-between bg-base-100 p-4 rounded-xl shadow mb-3"
-    >
-
-      <div>
-
-        ৳{payment.amount}
-
-      </div>
-
-      <PDFDownloadLink
-        document={
-          <InvoicePDF
-            payment={payment}
-          />
-        }
-        fileName={`invoice-${payment.transactionId}.pdf`}
-      >
-
-        Download Invoice
-
-      </PDFDownloadLink>
-
-    </div>
-
-  ))
-
-}
-
 </div>
 
 {
@@ -341,37 +307,86 @@ const Profile = () => {
     payments.map(payment => (
 
       <div
-        key={payment._id}
-        className="flex justify-between items-center border-b py-4"
-      >
+  key={payment._id}
+  className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 border-b py-4"
+>
 
-        <div>
+  <div>
 
-          <p className="font-semibold">
+    <p className="font-bold text-lg">
 
-            ৳ {payment.amount}
+      ৳ {payment.amount}
 
-          </p>
+    </p>
 
-          <p className="text-sm text-gray-500">
+    <p className="text-sm text-gray-500">
 
-            {payment.transactionId}
+      Transaction:
+      {payment.transactionId}
 
-          </p>
+    </p>
 
-        </div>
+    <span className="badge badge-secondary mt-2">
 
-        <div>
+      {payment.type}
+
+    </span>
+
+  </div>
+
+  <div className="flex flex-col items-end gap-2">
+
+    <p className="text-sm text-gray-500">
+
+      {
+        new Date(
+          payment.createdAt || payment.date
+        ).toLocaleDateString()
+      }
+
+    </p>
+
+    <PDFDownloadLink
+      document={
+        <InvoicePDF payment={payment} />
+      }
+      fileName={`invoice-${payment.transactionId}.pdf`}
+    >
+
+      {({ loading }) => (
+
+        <button
+          className="
+            px-4 py-2
+            rounded-xl
+            text-white
+            font-semibold
+            shadow-lg
+            bg-gradient-to-r
+            from-violet-600
+            to-purple-600
+            hover:from-violet-700
+            hover:to-purple-700
+            transition-all
+            duration-300
+          "
+        >
 
           {
-            new Date(
-              payment.createdAt
-            ).toLocaleDateString()
+            loading
+              ? "Preparing..."
+              : "Download Invoice"
           }
 
-        </div>
+        </button>
 
-      </div>
+      )}
+
+    </PDFDownloadLink>
+
+  </div>
+
+</div>
 
     ))
 
