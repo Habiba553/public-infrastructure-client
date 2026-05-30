@@ -98,20 +98,13 @@ const CheckoutForm = () => {
 
       return;
     }
-
     const result = await stripe.confirmCardPayment(
-
       clientSecret,
-
       {
         payment_method: {
-
           card,
-
           billing_details: {
-
             email: user.email,
-
             name: user.displayName
           }
         }

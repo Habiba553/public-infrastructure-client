@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
-
+import { Link,useNavigate } from "react-router-dom";
 const ReportIssue = () => {
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -17,11 +17,10 @@ const ReportIssue = () => {
   } = useForm({
     defaultValues: {
       category: "Road",
-      priority: "Medium", // Added a default priority field for richer data
+      priority: "Medium", 
     }
   });
 
-  // Watch image field to generate a live preview URL
   const selectedImage = watch("image");
   useEffect(() => {
     if (selectedImage && selectedImage.length > 0) {
@@ -35,8 +34,72 @@ const ReportIssue = () => {
       setImagePreview(null);
     }
   }, [selectedImage]);
+const [userInfo, setUserInfo] = useState({});
+const [issueCount, setIssueCount] = useState(0);
+const limitReached =
+  !userInfo.premium &&
+  issueCount >= 3;
+useEffect(() => {
 
+  if (!user?.email) return;
+
+  axios.get(
+    `http://localhost:5000/users/${user.email}`,
+    {
+      headers: {
+        authorization:
+          `Bearer ${
+            localStorage.getItem(
+              "access-token"
+            )
+          }`
+      }
+    }
+  )
+  .then(res => {
+
+    setUserInfo(res.data);
+
+  });
+
+  axios.get(
+    `http://localhost:5000/my-issues/${user.email}`
+  )
+  .then(res => {
+    setIssueCount(
+      res.data.length
+    );
+
+  });
+
+}, [user]);
   const onSubmit = async (data) => {
+    if (limitReached) {
+
+      Swal.fire({
+    
+        icon: "warning",
+    
+        title: "Limit Reached",
+    
+        text:
+          "Free users can report only 3 issues. Become Premium to submit unlimited issues.",
+    
+        confirmButtonText: "Become Premium",
+    
+        showCancelButton: true,
+    
+        cancelButtonText: "Later"
+    
+      }).then((result) => {
+    
+        if (result.isConfirmed) {
+          navigate("/dashboard/profile");
+        }
+      });
+    
+      return;
+    }
     setUploading(true);
     try {
       const imageFile = data.image[0];
@@ -70,6 +133,7 @@ const ReportIssue = () => {
           text: "Thank you for making the community better.",
           confirmButtonColor: "#4F46E5",
         });
+        navigate('/dashboard/my-issues');
         reset();
         setImagePreview(null);
       }
@@ -96,7 +160,27 @@ const ReportIssue = () => {
           Help us identify and resolve infrastructure problems in your area quickly.
         </p>
       </div>
+      {
+  limitReached && (
 
+    <div className="alert alert-warning mb-8">
+
+      <span>
+        Free users can report
+        only 3 issues.
+      </span>
+
+      <Link
+        to="/dashboard/profile"
+        className="btn btn-warning btn-sm"
+      >
+        Become Premium
+      </Link>
+
+    </div>
+
+  )
+}
       <div className="grid gap-8 md:grid-cols-3">
         {/* --- LEFT / MAIN FORM SIDE (Takes 2 cols) --- */}
         <div className="card bg-base-100 shadow-xl border border-base-200 md:col-span-2">
@@ -190,7 +274,7 @@ const ReportIssue = () => {
 
               {/* Submit Button */}
               <button
-  disabled={uploading}
+ disabled={uploading}
   type="submit"
   className={`btn w-full text-white font-bold tracking-wide transition-all shadow-md block min-h-[3.2rem] bg-[#7c3aed] border-none rounded-2xl ${
     uploading ? "opacity-70 cursor-not-allowed" : "hover:shadow-lg hover:bg-[#6d28d9] hover:-translate-y-0.5 active:translate-y-0"
@@ -212,7 +296,11 @@ const ReportIssue = () => {
       >
         <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
       </svg>
-      <span className="text-lg font-semibold">Report Issue</span>
+      <span className="text-lg font-semibold">
+  {limitReached
+    ? "Upgrade To Premium"
+    : "Report Issue"}
+</span>
     </span>
   )}
 </button>

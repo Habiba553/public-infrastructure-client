@@ -42,7 +42,27 @@ const navigate = useNavigate();
       `http://localhost:5000/issues?search=${debouncedSearch}&category=${category}&status=${status}&priority=${priority}&sort=${sort}&page=${page}&size=${size}`
     )
     .then(res => {
-      setIssues(res.data.issues);
+      const sortedIssues =
+  res.data.issues.sort((a, b) => {
+
+    if (
+      a.priority === "high" &&
+      b.priority !== "high"
+    ) {
+      return -1;
+    }
+
+    if (
+      a.priority !== "high" &&
+      b.priority === "high"
+    ) {
+      return 1;
+    }
+
+    return 0;
+  });
+
+setIssues(sortedIssues);
       setCount(res.data.total);
       setLoading(false);
     });
@@ -203,7 +223,9 @@ const navigate = useNavigate();
             <option value="pending">Pending</option>
             <option value="resolved">Resolved</option>
             <option value="in-progress">In Progress</option>
-            <option value="in-progress">Closed</option>
+            <option value="closed">
+  Closed
+</option>
           </select>
         </div>
 
