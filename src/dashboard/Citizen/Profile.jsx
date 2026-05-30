@@ -3,14 +3,18 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
-
+import {
+  PDFDownloadLink
+} from "@react-pdf/renderer";
+import InvoicePDF from
+"../../components/InvoicePDF";
 const Profile = () => {
 
   const { user, updateUserProfile } = useAuth();
 
   const [userInfo, setUserInfo] = useState({});
   const [loading, setLoading] = useState(true);
-
+  const [payments, setPayments] = useState([]);
   useEffect(() => {
 
     axios
@@ -28,6 +32,20 @@ const Profile = () => {
 
         setUserInfo(res.data);
         setLoading(false);
+      });
+      axios.get(
+        `http://localhost:5000/payments/${user.email}`,
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem(
+              "access-token"
+            )}`
+          }
+        }
+      )
+      .then(res => {
+        setPayments(res.data);
+    
       });
 
   }, [user]);
@@ -263,8 +281,106 @@ const Profile = () => {
         </form>
 
       </div>
+      <div className="bg-base-100 shadow-xl rounded-3xl p-10 mt-10">
+
+      <div className="mt-10">
+
+<h2 className="text-3xl font-bold mb-6">
+
+  Payment History
+
+</h2>
+
+{
+
+  payments.map(payment => (
+
+    <div
+      key={payment._id}
+      className="flex justify-between bg-base-100 p-4 rounded-xl shadow mb-3"
+    >
+
+      <div>
+
+        ৳{payment.amount}
+
+      </div>
+
+      <PDFDownloadLink
+        document={
+          <InvoicePDF
+            payment={payment}
+          />
+        }
+        fileName={`invoice-${payment.transactionId}.pdf`}
+      >
+
+        Download Invoice
+
+      </PDFDownloadLink>
 
     </div>
+
+  ))
+
+}
+
+</div>
+
+{
+  payments.length === 0 ? (
+
+    <p className="text-gray-500">
+
+      No payment records found.
+
+    </p>
+
+  ) : (
+
+    payments.map(payment => (
+
+      <div
+        key={payment._id}
+        className="flex justify-between items-center border-b py-4"
+      >
+
+        <div>
+
+          <p className="font-semibold">
+
+            ৳ {payment.amount}
+
+          </p>
+
+          <p className="text-sm text-gray-500">
+
+            {payment.transactionId}
+
+          </p>
+
+        </div>
+
+        <div>
+
+          {
+            new Date(
+              payment.createdAt
+            ).toLocaleDateString()
+          }
+
+        </div>
+
+      </div>
+
+    ))
+
+  )
+}
+
+</div>
+    </div>
+    
   );
 };
 

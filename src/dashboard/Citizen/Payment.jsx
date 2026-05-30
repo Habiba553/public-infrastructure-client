@@ -128,13 +128,25 @@ const CheckoutForm = () => {
 
 
     if (result.paymentIntent.status === 'succeeded') {
-
+      const paymentInfo = {
+        email: user.email,
+        name: user.displayName,
+        amount: premiumAmount,
+        transactionId:
+          result.paymentIntent.id,
+        paymentMethod:
+          result.paymentIntent.payment_method,
+        type: "premium",
+        date: new Date()
+      };
+      
+      await axios.post(
+        "http://localhost:5000/payments",
+        paymentInfo
+      );
       await axios.patch(
         `http://localhost:5000/users/premium/${user.email}`
       );
-
-
-
       Swal.fire({
         icon: 'success',
         title: 'Payment Successful'
@@ -163,7 +175,7 @@ const CheckoutForm = () => {
         {
           processing
             ? 'Processing...'
-            : `Pay $${premiumAmount}`
+            : `Pay ${premiumAmount}Tk`
         }
 
       </button>

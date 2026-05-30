@@ -4,14 +4,32 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import useAuth from '../../hooks/useAuth'; // Adjust path based on your directory structure
 import axios from "axios";
 import useUserStatus from '../../hooks/useRole';
-
+import { useEffect, useState } from "react";
 const CitizenHome = () => {
   const { user } = useAuth();
   const [role, isBlocked, roleLoading] = useUserStatus();
-
+  const [payments, setPayments] = useState([]);
   // Fetch all issues submitted by this specific user
   const token = localStorage.getItem("access-token");
-
+  useEffect(() => {
+    if (!user?.email) return;
+    axios.get(
+      `http://localhost:5000/payments/${user.email}`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }
+    )
+    .then(res => {
+      console.log("PAYMENTS =", res.data);
+      setPayments(res.data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  
+  }, [user]);
   const {
     data: myIssues = [],
     isLoading: issuesLoading
@@ -40,7 +58,14 @@ const CitizenHome = () => {
   
   // Calculate payments (assuming premium status or a local payments check)
   // If you track a payment array, change 1 to your metric. Here we check premium status.
-  const totalPayments = totalSubmitted > 0 && myIssues.some(i => i.priority === 'high') ? 1 : 0; 
+  const totalPayments =
+  payments.length;
+const totalAmountPaid =
+  payments.reduce(
+    (sum, payment) =>
+      sum + Number(payment.amount || 0),
+    0
+  );
 
   if (roleLoading || issuesLoading) {
     return (
@@ -102,7 +127,7 @@ const CitizenHome = () => {
         </div>
         <div className="bg-base-100 p-5 rounded-xl border border-base-200 shadow-sm flex flex-col justify-between border-l-4 border-l-purple-500">
           <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">Payments</span>
-          <span className="text-3xl font-black text-purple-600 mt-2">${totalPayments * 20} <span className="text-xs font-normal text-base-content/50">({totalPayments})</span></span>
+          <span className="text-3xl font-black text-purple-600 mt-2">৳{totalAmountPaid}<span className="text-xs font-normal text-base-content/50">({payments.length})</span></span>
         </div>
       </div>
 
